@@ -78,28 +78,6 @@ As new events are coming in from the Kafka firehose, Diffusion is dynamically br
 ### Lesson 5: [Naming Reference Topic With Topic Content](https://www.pushtechnology.com/blog/tutorial/using-topic-views-5.naming-reference-topic-with-topic-content/)
 ### Lesson 6: [Changing Topic Properties Of Reference Topics](https://www.pushtechnology.com/blog/tutorial/using-topic-views-6.changing-topic-properties-of-reference-topics/)
 
-# APIs used in the subscriber application
-
-## **Step 1: Connect to Diffusion**
-### [diffusion.connect](https://docs.pushtechnology.com/docs/6.5.1/js/globals.html#connect) > [*create your host*](https://management.ad.diffusion.cloud/)
-```js
-diffusion.connect({
-	host : host, // Use your Diffusion service or connect to our sandbox "kafkagateway.eu.diffusion.cloud"
-	principal : "user", // This user has access to all topic tree, so no granular security is done here (check lesson 3 for security and permissions)
-	credentials : "password"})
-```
-## **Step 2: Create a Topic Listener**
-### [session.addStream](https://docs.pushtechnology.com/docs/6.5.1/js/interfaces/session.html#addstream)
-In this case `_fxTopic` is the path to the currency pairName, eg: `kafka/fx/GBP:EUR`
-```js
-session.addStream(_fxTopic, diffusion.datatypes.json());
-```
-## **Step 3: Subscribe to a Topic**
-### [session.select](https://docs.pushtechnology.com/docs/6.5.1/js/interfaces/session.html#select)
-```js
-session.select(_fxTopic);
-```
-
 # Pre-requisites
 
 *  Download our code examples or clone them to your local environment:
