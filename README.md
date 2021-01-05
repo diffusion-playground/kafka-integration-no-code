@@ -18,7 +18,7 @@ This lesson also shows how to use our Kafka adapter to ingest and broadcast fx d
 
 ## Step 1: Configure Kafka Adapter in Cloud
 ### Go to: [Diffusion Cloud > Manage Service > Adapters > Kafka Adapter > Ingest from Kafka](https://dashboard.diffusion.cloud)
-[![Kafka Adapter Video](https://github.com/pushtechnology/tutorials/blob/master/data-store/diffusion-kafka-app-L2/images/ingest.png)](https://www.pushtechnology.com/blog/how-to-build-a-real-time-messaging-app-using-diffusion/)
+[![Kafka Adapter Video](https://raw.githubusercontent.com/diffusion-playground/kafka-integration-no-code/master/kafka-app-L1/images/ingest.png)](https://www.pushtechnology.com/blog/how-to-build-a-real-time-messaging-app-using-diffusion/)
 ```
 Adapters > Kafka Adapter > Ingest_from_Kafka Config:
 
@@ -33,7 +33,7 @@ Adapters > Kafka Adapter > Ingest_from_Kafka Config:
 ### Go to: [Diffusion Cloud > Manage Service > Console > Topics](https://dashboard.diffusion.cloud)
 We can see the events from `kafka.firehose.fx` Kafka topic (we set up on previous step) is now being published to Diffusion topic path: `kafka.firehose.fx`. If there are no new events, it might be because the `kafka.firehose.fx` topic has not received any updates from Kafka.
 
-![](https://github.com/diffusion-playground/kafka-integration-no-code/master/kafka-app-L1/images/kafka%20firehose.png)
+![](https://github.com/diffusion-playground/kafka-integration-no-code/blob/master/kafka-app-L1/images/kafka%20firehose.png)
 
 ## Step 3: Create a Topic View using [Source value directives](https://docs.pushtechnology.com/docs/6.5.2/manual/html/designguide/data/topictree/topic_views.html)
 Source value directives use the keyword [`scalar()`](https://www.pushtechnology.com/blog/tutorial/using-topic-views-5.naming-reference-topic-with-topic-content/) and are parameterized by a single JSON pointer that extracts a scalar value from the source value.
@@ -48,7 +48,11 @@ We are going to `map` `kafka.firehose.fx` stream (we set up on previous step) `t
 ##### Topic View Specification:
 ##### `map kafka.firehose.fx to kafka/fx/<scalar(/value/pairName)>`
 
-![](https://github.com/diffusion-playground/kafka-integration-no-code/master/kafka-app-L1/images/topic%20views.png)
+![](https://github.com/diffusion-playground/kafka-integration-no-code/blob/master/kafka-app-L1/images/topic%20views.png)
+
+![](https://github.com/diffusion-playground/kafka-integration-no-code/blob/master/kafka-app-L1/images/topic%20views%202.png)
+
+![](https://github.com/diffusion-playground/kafka-integration-no-code/blob/master/kafka-app-L1/images/topic%20views%203.png)
 
 ***Alternatively, this is another example combining scalar and expand value directives used for dynamic branching and routing of event streams in real-time:***
 ##### Topic View Specification:
@@ -63,12 +67,11 @@ As new events are coming in from the Kafka firehose, Diffusion is dynamically br
 
 ##### The following image shows a Topic View for the following specification:
 ##### `map kafka.firehose.fx to kafka/fx/<scalar(/value/pairName)>`
-![](https://github.com/diffusion-playground/kafka-integration-no-code/master/kafka-app-L1/images/topic%20path.png)
+![](https://github.com/diffusion-playground/kafka-integration-no-code/blob/master/kafka-app-L1/images/topic%20path.png)
 
 ##### Alternatively, the following image shows a Topic View for the following specification:
 ##### `map kafka.firehose.fx to kafka/fx/<scalar(/value/pairName)>/<expand(/value)>`
-![](https://github.com/diffusion-playground/kafka-integration-no-code/master/kafka-app-L1/images/expand.png)
-
+![](https://github.com/diffusion-playground/kafka-integration-no-code/blob/master/kafka-app-L1/images/expand.png)
 
 ## Suggested: 6 Lessons Using Topic Views
 ### Lesson 1: [Mapping Topics](https://www.pushtechnology.com/blog/tutorial/using-topic-views-1.mapping-topics/)
@@ -77,6 +80,10 @@ As new events are coming in from the Kafka firehose, Diffusion is dynamically br
 ### Lesson 4: [Throttling Reference Topics](https://www.pushtechnology.com/blog/tutorial/using-topic-views-4.throttling-reference-topics/)
 ### Lesson 5: [Naming Reference Topic With Topic Content](https://www.pushtechnology.com/blog/tutorial/using-topic-views-5.naming-reference-topic-with-topic-content/)
 ### Lesson 6: [Changing Topic Properties Of Reference Topics](https://www.pushtechnology.com/blog/tutorial/using-topic-views-6.changing-topic-properties-of-reference-topics/)
+
+## Step 5: Configure Kafka Adapter in Cloud
+### Go to: Diffusion Cloud > Manage Service > Adapters > Kafka Adapter > Broadcast to Kafka
+![](https://github.com/diffusion-playground/kafka-integration-no-code/blob/master/kafka-app-L1/images/broadcast.png)
 
 # Pre-requisites
 
