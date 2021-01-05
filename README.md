@@ -1,17 +1,18 @@
-# Lesson 2: Fine-grained distribution of Kafka event firehose with Topic Views
+# Fine-grained distribution of Kafka event firehose with Topic Views
 
 Introduction to Diffusion Real-Time Event Stream through a simple application using [Diffusion](https://www.pushtechnology.com/product-overview) Cloud and Apache Kafka.
 
-A set of simple projects, illustrating production and consumption of foreign exchange (fx) event streams to and from Kafka clusters and Diffusion Cloud instance via the use of our [Kafka Adapter](https://www.pushtechnology.com/wp-content/uploads/2020/08/Diffusion-Cloud-Kafka-adapter.pdf).
+A simple projects illustrating **real-time replication and fan-out** of foreign exchange (fx) event streams from Kafka cluster A to Kafka cluster B, through **Diffusion Cloud** instance via the use of our [Kafka Adapter](https://www.pushtechnology.com/wp-content/uploads/2020/08/Diffusion-Cloud-Kafka-adapter.pdf).
 
-These JavaScript code examples will help you publish fx events on real-time from a front end app to a Kafka cluster, consume from it and transform data on-the-fly via our powerful [Topic Views](https://docs.pushtechnology.com/docs/6.5.2/manual/html/designguide/data/topictree/topic_views.html) feature. You can also use other programming languages from our [SDKs](https://docs.pushtechnology.com/#sdks), including iOS, Android, C, .NET, and more.
+These JavaScript code examples will help you publish fx events on real-time from a front-end app to a Kafka cluster A, consume from it and transform data on-the-fly via our powerful [Topic Views](https://docs.pushtechnology.com/docs/6.5.2/manual/html/designguide/data/topictree/topic_views.html) feature.
 
+Although we provide a fx data simulation client using JavaScript, to populate Kafka cluster A, this tutorial purely focus on the **no-code solution** to deliver event data between remote Kafka sites/clusters where not all the firehose data from one site needs to be replicated/fanned-out to the other.
 
 ![](https://raw.githubusercontent.com/diffusion-playground/kafka-integration-no-code/master/kafka-app-L1/images/kafkaL2.png)
 
-# Lesson 2: Fine-grained distribution of Kafka event firehose with Topic Views
-**diffusion-kafka-app-L2** introduces the concept of [Topic Views](https://docs.pushtechnology.com/docs/6.5.2/manual/html/designguide/data/topictree/topic_views.html), a dynamic mechanism to map part of a server's [Topic Tree](https://docs.pushtechnology.com/docs/6.5.2/manual/html/designguide/data/topictree/topic_tree.html) to another. This enables real-time data transformation before sending it to subscribed clients as well as to create dynamic data models based on on-the-fly data (eg: Kafka firehose data).
-This lesson also shows how to Subscribe to fx data using Diffusion Topic Views in order to consume what you need, not all the Kafka stream.
+# Fine-grained distribution of Kafka event firehose with Topic Views
+**kafka-app-L1** introduces the concept of [Topic Views](https://docs.pushtechnology.com/docs/6.5.2/manual/html/designguide/data/topictree/topic_views.html), a dynamic mechanism to map part of a server's [Topic Tree](https://docs.pushtechnology.com/docs/6.5.2/manual/html/designguide/data/topictree/topic_tree.html) to another. This enables real-time data transformation before replicating to a remote cluster as well as to create dynamic data models based on on-the-fly data (eg: Kafka firehose data).
+This lesson also shows how to use our Kafka adapter to ingest and broadcast fx data using Diffusion Topic Views in order to consume what you need, not all the Kafka stream.
 
 # Features used in this lesson
 
@@ -77,28 +78,6 @@ As new events are coming in from the Kafka firehose, Diffusion is dynamically br
 ### Lesson 5: [Naming Reference Topic With Topic Content](https://www.pushtechnology.com/blog/tutorial/using-topic-views-5.naming-reference-topic-with-topic-content/)
 ### Lesson 6: [Changing Topic Properties Of Reference Topics](https://www.pushtechnology.com/blog/tutorial/using-topic-views-6.changing-topic-properties-of-reference-topics/)
 
-# APIs used in the subscriber application
-
-## **Step 1: Connect to Diffusion**
-### [diffusion.connect](https://docs.pushtechnology.com/docs/6.5.1/js/globals.html#connect) > [*create your host*](https://management.ad.diffusion.cloud/)
-```js
-diffusion.connect({
-	host : host, // Use your Diffusion service or connect to our sandbox "kafkagateway.eu.diffusion.cloud"
-	principal : "user", // This user has access to all topic tree, so no granular security is done here (check lesson 3 for security and permissions)
-	credentials : "password"})
-```
-## **Step 2: Create a Topic Listener**
-### [session.addStream](https://docs.pushtechnology.com/docs/6.5.1/js/interfaces/session.html#addstream)
-In this case `_fxTopic` is the path to the currency pairName, eg: `kafka/fx/GBP:EUR`
-```js
-session.addStream(_fxTopic, diffusion.datatypes.json());
-```
-## **Step 3: Subscribe to a Topic**
-### [session.select](https://docs.pushtechnology.com/docs/6.5.1/js/interfaces/session.html#select)
-```js
-session.select(_fxTopic);
-```
-
 # Pre-requisites
 
 *  Download our code examples or clone them to your local environment:
@@ -124,7 +103,3 @@ You can also leave the default values and connect to our sandbox service:
 
 Really easy, just open the index.html file locally and off you go!
 
-# Go to Lesson 3
-
-[Click here](https://github.com/pushtechnology/tutorials/tree/master/data-store/diffusion-kafka-app-L3) to go to lesson 3.
-**diffusion-kafka-app-L3** introduces the concept of [Security](https://docs.pushtechnology.com/docs/6.5.1/manual/html/designguide/security/c_security.html) and topic [path permissions](https://docs.pushtechnology.com/docs/6.5.2/manual/html/designguide/security/permissions_reference.html) for fine-grained security management of your data structure. It also shows how to Subscribe to fx data using [Diffusion Topic Views](https://docs.pushtechnology.com/docs/6.5.2/manual/html/designguide/data/topictree/topic_views.html) in order to consume what you need, not all the Kafka stream.
