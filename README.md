@@ -33,7 +33,7 @@ Adapters > Kafka Adapter > Ingest_from_Kafka Config:
 ### Go to: [Diffusion Cloud > Manage Service > Console > Topics](https://dashboard.diffusion.cloud)
 We can see the events from `kafka.firehose.fx` Kafka topic (we set up on previous step) is now being published to Diffusion topic path: `kafka.firehose.fx`. If there are no new events, it might be because the `kafka.firehose.fx` topic has not received any updates from Kafka.
 
-![](https://github.com/pushtechnology/tutorials/blob/master/data-store/diffusion-kafka-app-L2/images/kafka%20firehose.png)
+![](https://github.com/diffusion-playground/kafka-integration-no-code/master/kafka-app-L1/images/kafka%20firehose.png)
 
 ## Step 3: Create a Topic View using [Source value directives](https://docs.pushtechnology.com/docs/6.5.2/manual/html/designguide/data/topictree/topic_views.html)
 Source value directives use the keyword [`scalar()`](https://www.pushtechnology.com/blog/tutorial/using-topic-views-5.naming-reference-topic-with-topic-content/) and are parameterized by a single JSON pointer that extracts a scalar value from the source value.
@@ -48,7 +48,7 @@ We are going to `map` `kafka.firehose.fx` stream (we set up on previous step) `t
 ##### Topic View Specification:
 ##### `map kafka.firehose.fx to kafka/fx/<scalar(/value/pairName)>`
 
-![](https://github.com/pushtechnology/tutorials/blob/master/data-store/diffusion-kafka-app-L2/images/topic%20views.png)
+![](https://github.com/diffusion-playground/kafka-integration-no-code/master/kafka-app-L1/images/topic%20views.png)
 
 ***Alternatively, this is another example combining scalar and expand value directives used for dynamic branching and routing of event streams in real-time:***
 ##### Topic View Specification:
@@ -63,11 +63,11 @@ As new events are coming in from the Kafka firehose, Diffusion is dynamically br
 
 ##### The following image shows a Topic View for the following specification:
 ##### `map kafka.firehose.fx to kafka/fx/<scalar(/value/pairName)>`
-![](https://github.com/pushtechnology/tutorials/blob/master/data-store/diffusion-kafka-app-L2/images/topic%20path.png)
+![](https://github.com/diffusion-playground/kafka-integration-no-code/master/kafka-app-L1/images/topic%20path.png)
 
 ##### Alternatively, the following image shows a Topic View for the following specification:
 ##### `map kafka.firehose.fx to kafka/fx/<scalar(/value/pairName)>/<expand(/value)>`
-![](https://github.com/pushtechnology/tutorials/blob/master/data-store/diffusion-kafka-app-L2/images/expand.png)
+![](https://github.com/diffusion-playground/kafka-integration-no-code/master/kafka-app-L1/images/expand.png)
 
 
 ## Suggested: 6 Lessons Using Topic Views
