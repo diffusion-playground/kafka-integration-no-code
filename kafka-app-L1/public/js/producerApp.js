@@ -5,7 +5,7 @@ let _fxTopic = "FXPairs";  // This is the Diffusion topic where we publish the f
 let host = getQueryVariable("host") || "kafkagateway-eu.eu.diffusion.cloud";
 
 // update h1 title on the diffusion2kafka.html page
-document.getElementById("room-title").innerText = 'Broadcast FX data to Kafka';
+document.getElementById("room-title").innerText = 'FX data firehose to Kafka Cluster A ';
 
 // Hook into the form's onsubmit callback. This will send updates to the fx topic in Diffusion.
 let parametersForm = document.getElementById("parametersForm");
@@ -520,13 +520,13 @@ function publishFX(loop, frequency, totalLoops) {
 		
 		let percentage = 100 - (loop * 100 / totalLoops);
 		// update h1 title on the diffusion2kafka.html page
-		document.getElementById("room-title").innerText = 'Broadcast in progress... ' + percentage.toFixed(0) + '%';
+		document.getElementById("room-title").innerText = 'Sending FX data to Kafka cluster A ... ' + percentage.toFixed(0) + '%';
     
         if(loop > 1) {
             publishFX(loop - 1, frequency, totalLoops);
         } else {
 			// update h1 title on the diffusion2kafka.html page
-			document.getElementById("room-title").innerText = 'Broadcast completed!';
+			document.getElementById("room-title").innerText = 'FX data transmission completed!';
 		}
 	}, frequency);
 }

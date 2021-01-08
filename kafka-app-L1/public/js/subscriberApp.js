@@ -5,7 +5,7 @@ let _fxTopic = null;
 let host = getQueryVariable("host") || "kafkagateway-eu.eu.diffusion.cloud";
 
 // update h1 title on the kafka2diffusion.html page
-document.getElementById("room-title").innerText = 'Ingest FX data from Kafka';
+document.getElementById("room-title").innerText = 'Visualize FX data from Kafka cluster B';
 
 var useShift = false;
 // using JSCharting to graph fx
@@ -72,7 +72,7 @@ parametersForm.onsubmit = (evt) => {
     );
     
     // update h1 title on the kafka2diffusion.html page
-    document.getElementById("room-title").innerText = 'Listening for FX data from Kafka';
+    document.getElementById("room-title").innerText = 'Listening for fine-grained FX data from Kafka cluster B';
     
     return true;
 };
