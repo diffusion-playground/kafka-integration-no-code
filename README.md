@@ -1,3 +1,5 @@
+[![Video Tutorial](https://github.com/pushtechnology/tutorials/blob/master/data-store/video.png)](https://www.pushtechnology.com/blog/fine-grained-fan-out-and-replication-of-kafka-event-firehose-between-clusters/)
+
 # Fine-grained fan-out and replication of Kafka event firehose between clusters/sites.
 
 Introduction to Diffusion Real-Time Event Stream through a simple application using [Diffusion](https://www.pushtechnology.com/product-overview) Cloud and Apache Kafka.
