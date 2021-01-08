@@ -1,4 +1,4 @@
-# Fine-grained distribution of Kafka event firehose with Topic Views
+# Fine-grained fan-out and replication of Kafka event firehose between clusters/sites.
 
 Introduction to Diffusion Real-Time Event Stream through a simple application using [Diffusion](https://www.pushtechnology.com/product-overview) Cloud and Apache Kafka.
 
@@ -11,95 +11,99 @@ Although we provide a fx data simulation client using JavaScript, to populate Ka
 ![](https://raw.githubusercontent.com/diffusion-playground/kafka-integration-no-code/master/kafka-app-L1/images/kafkaL2.png)
 
 # Fine-grained distribution of Kafka event firehose with Topic Views
-**kafka-app-L1** introduces the concept of [Topic Views](https://docs.pushtechnology.com/docs/6.5.2/manual/html/designguide/data/topictree/topic_views.html), a dynamic mechanism to map part of a server's [Topic Tree](https://docs.pushtechnology.com/docs/6.5.2/manual/html/designguide/data/topictree/topic_tree.html) to another. This enables real-time data transformation before replicating to a remote cluster as well as to create dynamic data models based on on-the-fly data (eg: Kafka firehose data).
-This lesson also shows how to use our Kafka adapter to ingest and broadcast fx data using Diffusion Topic Views in order to consume what you need, not all the Kafka stream.
+**kafka-app-L1** introduces the concept of [**Topic Views**](https://docs.pushtechnology.com/docs/6.5.2/manual/html/designguide/data/topictree/topic_views.html), a dynamic mechanism to map part of a server's [Topic Tree](https://docs.pushtechnology.com/docs/6.5.2/manual/html/designguide/data/topictree/topic_tree.html) to another. This enables real-time data transformation before replicating to a remote cluster as well as to create dynamic data models based on on-the-fly data (eg: Kafka firehose data).
+This lesson also shows how to use our [**Kafka adapter**](https://www.pushtechnology.com/blog/connect-diffusion-with-apache-kafka/) to ingest and broadcast fx data using Diffusion Topic Views in order to consume what you need, not all the Kafka stream.
 
 # Features used in this lesson
 
-## Step 1: Configure Kafka Adapter in Cloud
+## Step 1: Configure Kafka Adapter in Cloud to ingest from Kafka Cluster A
 ### Go to: [Diffusion Cloud > Manage Service > Adapters > Kafka Adapter > Ingest from Kafka](https://dashboard.diffusion.cloud)
-[![Kafka Adapter Video](https://github.com/pushtechnology/tutorials/blob/master/data-store/diffusion-kafka-app-L2/images/ingest.png)](https://www.pushtechnology.com/blog/how-to-build-a-real-time-messaging-app-using-diffusion/)
-```
-Adapters > Kafka Adapter > Ingest_from_Kafka Config:
+![](https://raw.githubusercontent.com/diffusion-playground/kafka-integration-no-code/master/kafka-app-L1/images/ingest.png)
 
-	Bootstrap Server > connect to you Kafka cluster (eg: "kafka-plain.preprod-demo.pushtechnology.com:9094")
+```
+Adapters > Kafka Adapter > Ingest from Kafka Config:
+
+	Bootstrap Server > connect to you Kafka cluster A (eg: "kafka-sasl.preprod-demo.pushtechnology")
 	Diffusion service credentials > admin, password (use the "Security" tab to create a user or admin account)
-	Kafka Topic subscription > the source topic from your Kafka cluster (eg: "kafka.firehose.fx")
-	Kafka Topic value type > we are using JSON but can be string, integer, byte, etc.
+	Kafka Topic subscription > the source topic from your Kafka cluster (eg: "FXPairs")
+	Kafka Topic value type > we are using JSON, but can be string, integer, byte, etc.
 	Kafka Topic key type > use string type for this code example.
 ```
 
-## Step 2: Check the Kafka stream is ingested
+## Step 2: Check the Kafka stream `FXPairs` is ingested
 ### Go to: [Diffusion Cloud > Manage Service > Console > Topics](https://dashboard.diffusion.cloud)
-We can see the events from `kafka.firehose.fx` Kafka topic (we set up on previous step) is now being published to Diffusion topic path: `kafka.firehose.fx`. If there are no new events, it might be because the `kafka.firehose.fx` topic has not received any updates from Kafka.
+We can see the events from `FXPairs` Kafka topic (from cluster A) is now being published to Diffusion topic path: `FXPairs`. If there are no new events, it might be because the `FXPairs` topic has not received any updates from Kafka yet.
 
-![](https://github.com/pushtechnology/tutorials/blob/master/data-store/diffusion-kafka-app-L2/images/kafka%20firehose.png)
+![](https://github.com/diffusion-playground/kafka-integration-no-code/blob/master/kafka-app-L1/images/kafka%20firehose.png)
 
-## Step 3: Create a Topic View using [Source value directives](https://docs.pushtechnology.com/docs/6.5.2/manual/html/designguide/data/topictree/topic_views.html)
-Source value directives use the keyword [`scalar()`](https://www.pushtechnology.com/blog/tutorial/using-topic-views-5.naming-reference-topic-with-topic-content/) and are parameterized by a single JSON pointer that extracts a scalar value from the source value.
-
-There are also other directives like [`expand()` value directive](https://docs.pushtechnology.com/docs/6.5.2/manual/html/designguide/data/topictree/topic_views.html) to create multiple reference topics from a single JSON source topic, or [`value()` directive](https://docs.pushtechnology.com/docs/6.5.2/manual/html/designguide/data/topictree/topic_views.html) to create a [new JSON value](https://www.pushtechnology.com/blog/new-topic-view-features-in-6.4) with a subset of a JSON source topic.
+## Step 3: Create Topic Views using [Source value directives](https://docs.pushtechnology.com/docs/6.5.2/manual/html/designguide/data/topictree/topic_views.html)
+Source value directives use the keyword [`expand()` value directive](https://docs.pushtechnology.com/docs/6.5.2/manual/html/designguide/data/topictree/topic_views.html) to create multiple reference topics from a single JSON source topic, or [`value()` directive](https://docs.pushtechnology.com/docs/6.5.2/manual/html/designguide/data/topictree/topic_views.html) to create a [new JSON value](https://www.pushtechnology.com/blog/new-topic-view-features-in-6.4) with a subset of a JSON source topic.
 
 ### Go to: [Diffusion Cloud > Manage Service > Console > Topics > Topic Views](https://management.ad.diffusion.cloud/#!/login)
-We are going to `map` `kafka.firehose.fx` stream (we set up on previous step) `to` a new Diffusion Topic View with path: `kafka/fx/<scalar(/value/pairName)>` where `/value/pairName` is the Kafka payload currency `pairName` (from previous step).
+We are going to `map` the topic `FXPairs` stream (we get from Kafka cluster A) `to` a new Diffusion Topic View with path: `pairs/<expand(/value/pairs,/pairName)>/` where `/value/pairs,/pairName` is the Kafka payload currency `pairName` (part of the JSON structure in the FXPairs Kafka topic).
 
-***This Topic View will take care of dynamic branching and routing of event streams in real-time, by only sending the specific currency pair, the Kafka stream consumer is subscribed to, and not the whole stream.***
+![](https://github.com/diffusion-playground/kafka-integration-no-code/blob/master/kafka-app-L1/images/topic%20views.png)
 
-##### Topic View Specification:
-##### `map kafka.firehose.fx to kafka/fx/<scalar(/value/pairName)>`
+***This Topic View will take care of dynamic branching and routing of event streams in real-time, by only sending the specific currency pair from Kafka cluster A, to Kafka cluster B, and not the whole stream.***
 
-![](https://github.com/pushtechnology/tutorials/blob/master/data-store/diffusion-kafka-app-L2/images/topic%20views.png)
+##### Topic View Specification for Currency Breakout:
+##### `map ?FXPairs// to pairs/<expand(/value/pairs,/pairName)>/`
 
-***Alternatively, this is another example combining scalar and expand value directives used for dynamic branching and routing of event streams in real-time:***
-##### Topic View Specification:
-##### `map kafka.firehose.fx to kafka/fx/<scalar(/value/pairName)>/<expand(/value)>`
+![](https://github.com/diffusion-playground/kafka-integration-no-code/blob/master/kafka-app-L1/images/topic%20views%202.png)
+
+##### Topic View Specification for Tiers Expansion:
+##### `map ?pairs// to tiers/<expand(/tiers)>/<path(1)>`
+
+![](https://github.com/diffusion-playground/kafka-integration-no-code/blob/master/kafka-app-L1/images/topic%20views%203.png)
 
 ## Step 4: Dynamic branching and routing of Kafka events firehose
-As new events are coming in from the Kafka firehose, Diffusion is dynamically branching and routing the currency pairs to the right subscriber.
+As new events are coming in from the Kafka cluster A firehose, Diffusion is dynamically branching and routing the currency pairs, on-the-fly when replicating and fan-out to Kafka cluster B.
 
 **Note:** The topic path will dynamically change as new currency pair values come in.
 
 ### Go to: [Diffusion Cloud > Manage Service > Console > Topics](https://management.ad.diffusion.cloud/#!/login)
 
 ##### The following image shows a Topic View for the following specification:
-##### `map kafka.firehose.fx to kafka/fx/<scalar(/value/pairName)>`
-![](https://github.com/pushtechnology/tutorials/blob/master/data-store/diffusion-kafka-app-L2/images/topic%20path.png)
+###### +pairs > `map ?FXPairs// to pairs/<expand(/value/pairs,/pairName)>/`
+###### +tiers > `map ?pairs// to tiers/<expand(/tiers)>/<path(1)>`
+![](https://github.com/diffusion-playground/kafka-integration-no-code/blob/master/kafka-app-L1/images/topic%20path.png)
 
-##### Alternatively, the following image shows a Topic View for the following specification:
-##### `map kafka.firehose.fx to kafka/fx/<scalar(/value/pairName)>/<expand(/value)>`
-![](https://github.com/pushtechnology/tutorials/blob/master/data-store/diffusion-kafka-app-L2/images/expand.png)
+##### When clicking on the "+" for "tiers" topic tree, the following image shows a Topic View for the following specification:
+###### `map ?pairs// to tiers/<expand(/tiers)>/<path(1)>`
+![](https://github.com/diffusion-playground/kafka-integration-no-code/blob/master/kafka-app-L1/images/expand.png)
 
+### Suggested: 6 Lessons Using Topic Views
+#### Lesson 1: [Mapping Topics](https://www.pushtechnology.com/blog/tutorial/using-topic-views-1.mapping-topics/)
+#### Lesson 2: [Mapping Topic Branches](https://www.pushtechnology.com/blog/tutorial/using-topic-views-2.mapping-topic-branches/)
+#### Lesson 3: [Extracting Source Topic Values](https://www.pushtechnology.com/blog/tutorial/using-topic-views-3.-extracting-source-topic-values/)
+#### Lesson 4: [Throttling Reference Topics](https://www.pushtechnology.com/blog/tutorial/using-topic-views-4.throttling-reference-topics/)
+#### Lesson 5: [Naming Reference Topic With Topic Content](https://www.pushtechnology.com/blog/tutorial/using-topic-views-5.naming-reference-topic-with-topic-content/)
+#### Lesson 6: [Changing Topic Properties Of Reference Topics](https://www.pushtechnology.com/blog/tutorial/using-topic-views-6.changing-topic-properties-of-reference-topics/)
 
-## Suggested: 6 Lessons Using Topic Views
-### Lesson 1: [Mapping Topics](https://www.pushtechnology.com/blog/tutorial/using-topic-views-1.mapping-topics/)
-### Lesson 2: [Mapping Topic Branches](https://www.pushtechnology.com/blog/tutorial/using-topic-views-2.mapping-topic-branches/)
-### Lesson 3: [Extracting Source Topic Values](https://www.pushtechnology.com/blog/tutorial/using-topic-views-3.-extracting-source-topic-values/)
-### Lesson 4: [Throttling Reference Topics](https://www.pushtechnology.com/blog/tutorial/using-topic-views-4.throttling-reference-topics/)
-### Lesson 5: [Naming Reference Topic With Topic Content](https://www.pushtechnology.com/blog/tutorial/using-topic-views-5.naming-reference-topic-with-topic-content/)
-### Lesson 6: [Changing Topic Properties Of Reference Topics](https://www.pushtechnology.com/blog/tutorial/using-topic-views-6.changing-topic-properties-of-reference-topics/)
+## Step 5: Configure Kafka Adapter in Cloud to broadcast to Kafka cluster B
+### Go to: Diffusion Cloud > Manage Service > Adapters > Kafka Adapter > Broadcast to Kafka
+![](https://github.com/diffusion-playground/kafka-integration-no-code/blob/master/kafka-app-L1/images/broadcast.png)
+
+```
+Adapters > Kafka Adapter > Broadcast to Kafka Config:
+
+	Bootstrap Server > connect to you Kafka cluster A (eg: "kafka-plain.preprod-demo.pushtechnology")
+	Diffusion service credentials > admin, password (use the "Security" tab to create a user or admin account)
+	Topic subscription > the source topic from Diffusion to be broadcasted to Kafka cluster B (eg: from "tiers/2/GBP-USD" to "FXPairs.tier2.GBP.USD")
+	Topic value type > we are using JSON, but can be string, integer, byte, etc.
+	Kafka Topic key type > use string type for this code example.
+```
 
 # Pre-requisites
 
 *  Download our code examples or clone them to your local environment:
 ```
- git clone https://github.com/pushtechnology/tutorials/
+ git clone https://github.com/diffusion-playground/kafka-integration-no-code/
 ```
 * A Diffusion service (Cloud or On-Premise), version 6.6 (update to latest preview version) or greater. Create a service [here](https://management.ad.diffusion.cloud/).
 * Follow our [Quick Start Guide](https://docs.pushtechnology.com/quickstart/#diffusion-cloud-quick-start) and get your service up in a minute!
 
-# Setup
-
-Make sure to add Diffusion library to your code. For JavaScript, we have added the following line in our `public/diffusion2kafka.html` and `public/diffusion2kafka.html`:
-```
-<script src='https://download.pushtechnology.com/clients/6.5.1/js/diffusion-6.5.1.js'></script>
-```
-Set lines 32-34 of `public/js/producerApp.js` and lines 50-52 of `public/js/subscriberApp.js`to the hostname of your Diffusion Cloud service, which you can find in your service dashboard.
-You can also leave the default values and connect to our sandbox service:
-* host: host ("kafkagateway.us.diffusion.cloud" by default)
-* user: 'user'
-* password: 'password'
-
-# Execution
+# FX Data Generator
 
 Really easy, just open the index.html file locally and off you go!
 
