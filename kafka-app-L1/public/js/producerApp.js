@@ -58,7 +58,7 @@ function publishFX(loop, frequency, totalLoops) {
 		else if (pairRandomizer < 9) { pairName = "USD:EUR"; }
 		else if (pairRandomizer < 11) { pairName = "USD:JPY"; }
 
-		//_session.topicUpdate.set(_fxTopic, diffusion.datatypes.json(),
+		//_session.topicUpdate.set(_fxTopic, diffusion.datatypes.json(), // another method to update a topic
 		_session.topicUpdate.createUpdateStream(_fxTopic, diffusion.datatypes.json()).set( 
 					{
 							pairName: pairName,
